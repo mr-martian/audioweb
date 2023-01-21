@@ -12,3 +12,8 @@ TODO LIST:
 - display tier names
 - edit tier names
 - delete tiers
+
+Requirements:
+```sh
+$ pip3 install Pillow praat-parselmouth websockets
+```
