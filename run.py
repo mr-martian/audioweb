@@ -17,6 +17,8 @@ parser.add_argument('-p', help='HTTP port', type=int, default=80)
 parser.add_argument('-w', help='Websocket port', type=int, default=5000)
 parser.add_argument('audio', action='store')
 parser.add_argument('annotations', help='annotation file', action='store')
+parser.add_argument('-n', help="host name (default 'localhost')",
+                    action='store', default='localhost')
 args = parser.parse_args()
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -35,7 +37,7 @@ with tempfile.TemporaryDirectory() as tempd:
     for st in static_files:
         os.symlink(os.path.join(static, st), os.path.join(tempd, st))
     with open(os.path.join(tempd, 'constants.js'), 'w') as fout:
-        fout.write('var WS_ADDR = "ws://localhost:%s/";\n' % args.w)
+        fout.write('var WS_ADDR = "ws://%s:%s/";\n' % (args.n, args.w))
     hproc = subprocess.Popen(['python3', hpath, str(args.p), tempd])
     wproc = subprocess.Popen(['python3', wpath, str(args.w), tempd])
     try:

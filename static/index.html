@@ -46,10 +46,10 @@
           display: block;
           opacity: 0.5;
       }
-      .span-edit {
+      #span-edit {
           display: none;
       }
-      .span-edit > input {
+      #span-edit > input {
           width: 80px;
       }
     </style>
@@ -63,6 +63,7 @@
         </div>
       </div>
     </div>
+    <button id="new-tier">Add Tier</button>
     <div id="userlist">
       <div id="me">
         <label for="username">Name:&nbsp;</label>
@@ -72,19 +73,26 @@
       </ul>
     </div>
     <div id="span-edit">
-      <div class="span-edit span-edit-new">
-        <input type="number" id="span-edit-new-start"></input>
+      <div id="span-edit-common">
+        <input type="number" id="span-edit-start"></input>
         <span> ms - </span>
-        <input type="number" id="span-edit-new-end"></input>
+        <input type="number" id="span-edit-end"></input>
         <span> ms</span>
         <br/>
-        <label for="span-edit-new-text">Contents: </label>
-        <input type="text" id="span-edit-new-text"></input>
-        <br/>
+        <label for="span-edit-text">Contents: </label>
+        <input type="text" id="span-edit-text"></input>
+      </div>
+      <div id="span-edit-new">
         <select id="span-edit-new-tier"></select>
-        <button id="span-edit-new-play">Play</button>
         <button id="span-edit-new-save">Add</button>
       </div>
+      <div id="span-edit-old">
+        <span id="span-edit-old-tier"></span>
+        <button id="span-edit-old-save">Save</button>
+        <button id="span-edit-old-delete">Delete</button>
+      </div>
+      <button id="span-edit-play">Play</button>
+      <button id="span-edit-cancel">Cancel</button>
     </div>
   </body>
 </html>

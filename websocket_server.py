@@ -51,12 +51,12 @@ async def connect(websocket):
                 })
             elif action == 'add_tier':
                 tid = max(TIERS.keys()) + 1
-                TIERS[tid] = event['name']
+                TIERS[tid] = event.get('name', 'Tier %s' % tid)
                 await send({
                     'type': 'add_tier',
                     'user': wid,
                     'id': tid,
-                    'name': event['name'],
+                    'name': TIERS[tid],
                 })
             elif action == 'rename_tier':
                 tid = event.get('id')

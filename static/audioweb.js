@@ -34,7 +34,9 @@ function audioReady() {
     receive(JSON.parse(data));
   };
   $('#editpane').mousedown(function(e) {
-    SPAN_START = getMS(e);
+    if (e.target.closest('.annotation') === null) {
+      SPAN_START = getMS(e);
+    }
   });
   $('#editpane').mouseup(function(e) {
     if (SPAN_START != -1) {
@@ -55,11 +57,11 @@ function audioReady() {
       set_selector(SPAN_START, getMS(e));
     }
   });
-  $('#span-edit-new-start,#span-edit-new-end').change(function() {
-    set_selector($('#span-edit-new-start').val(), $('#span-edit-new-end').val());
+  $('#span-edit-start,#span-edit-end').change(function() {
+    set_selector($('#span-edit-start').val(), $('#span-edit-end').val());
   });
-  $('#span-edit-new-play').click(function() {
-    play($('#span-edit-new-start').val(), $('#span-edit-new-end').val());
+  $('#span-edit-play').click(function() {
+    play($('#span-edit-start').val(), $('#span-edit-end').val());
   });
   $(window).keypress(function(e) {
     if (e.which === 32 && document.activeElement.tagName !== 'INPUT') {
@@ -69,26 +71,45 @@ function audioReady() {
     }
   });
   $('#span-edit-new-save').click(function() {
-    let start = parseInt($('#span-edit-new-start').val());
-    let end = parseInt($('#span-edit-new-end').val());
-    let tier = $('#span-edit-new-tier').val();
-    let text = $('#span-edit-new-text').val();
+    let start = parseInt($('#span-edit-start').val());
+    let end = parseInt($('#span-edit-end').val());
+    let tier = $('#span-edit-tier').val();
+    let text = $('#span-edit-text').val();
     let ann = {
       start: start,
       end: end,
       tier: tier,
       label: text
     }
-    set_selector(0, 0);
-    $('.span-edit').hide();
     send({type: 'add', annotation: ann});
     add_annotation(ann);
+    hide_span_edit();
   });
+  $('#span-edit-old-save').click(function() {
+    let oldann = JSON.parse($('#span-edit-old').data('orig'));
+    let newann = {
+      start: parseInt($('#span-edit-start').val()),
+      end: parseInt($('#span-edit-end').val()),
+      tier: oldann.tier,
+      label: $('#span-edit-text').val()
+    };
+    send({type: 'edit', old: oldann, new: newann});
+    edit_annotation(oldann, newann);
+    hide_span_edit();
+  });
+  $('#span-edit-old-delete').click(function() {
+    let ann = JSON.parse($('#span-edit-old').data('orig'));
+    remove_annotation(ann);
+    send({type: 'remove', annotation: ann});
+    hide_span_edit();
+  });
+  $('#span-edit-cancel').click(hide_span_edit);
+  $('#new-tier').click(function() { send({type: 'add_tier'}); });
 }
 
-function click_span(e) {
-  console.log('click!');
-  e.preventDefault();
+function hide_span_edit() {
+  $('#span-edit').hide();
+  set_selector(0, 0);
 }
 
 function make_tier_dropdown() {
@@ -115,11 +136,31 @@ function set_selector(start_ms, end_ms) {
 }
 
 function create_span(start_ms, end_ms) {
-  $('.span-edit').hide();
   make_tier_dropdown();
-  $('.span-edit-new').show();
-  $('#span-edit-new-start').val(start_ms);
-  $('#span-edit-new-end').val(end_ms);
+  $('#span-edit').show();
+  $('#span-edit-old').hide();
+  $('#span-edit-new').show();
+  $('#span-edit-start').val(start_ms);
+  $('#span-edit-end').val(end_ms);
+}
+
+function click_span(e) {
+  let el = e.target.closest('.annotation');
+  if (el === null) {
+    return;
+  }
+  let ann = JSON.parse(el.getAttribute('data-ann'));
+  console.log('click!');
+  $('#span-edit').show();
+  $('#span-edit-old').show();
+  $('#span-edit-new').hide();
+  $('#span-edit-old-tier').html(TIERS[ann.tier].name);
+  $('#span-edit-start').val(ann.start);
+  $('#span-edit-end').val(ann.end);
+  $('#span-edit-text').val(ann.label);
+  set_selector(ann.start, ann.end);
+  $('#span-edit-old').data('orig', JSON.stringify(ann));
+  e.preventDefault();
 }
 
 function send(data) {
@@ -157,6 +198,7 @@ function display_tier(tid) {
 function add_annotation(ann) {
   let el = document.createElement('div');
   el.className = 'annotation';
+  el.setAttribute('data-ann', JSON.stringify(ann));
   el.innerHTML = '<span>' + ann.label + '</span>';
   el.style.left = (ann.start / 10) + 'px';
   $(el).width(((ann.end - ann.start)/10) + 'px');
@@ -167,9 +209,28 @@ function add_annotation(ann) {
 }
 
 function remove_annotation(ann) {
+  let children = TIERS[ann.tier].tier_elem.children;
+  let rem = [];
+  let str = JSON.stringify(ann);
+  for (let i = 0; i < children.length; i++) {
+    if (children[i].getAttribute('data-ann') === str) {
+      rem.push(children[i]);
+    }
+  }
+  rem.forEach((x) => { x.remove(); });
+  let arr = [];
+  ANNOTATIONS[ann.tier].forEach((a) => {
+    if ((a.start != ann.start) || (a.end != ann.end) ||
+        (a.label != ann.label)) {
+      arr.push(a);
+    }
+  });
+  ANNOTATIONS[ann.tier] = arr;
 }
 
 function edit_annotation(oldann, newann) {
+  remove_annotation(oldann);
+  add_annotation(newann);
 }
 
 function receive(event) {
