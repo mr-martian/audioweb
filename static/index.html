@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="constants.js"></script>
+    <script type="text/javascript" src="audioweb.js"></script>
+    <style>
+      #scrollwrapper {
+          width: 100%;
+          overflow-x: scroll;
+      }
+      #editpane {
+          width: 10000px;
+          position: relative;
+      }
+      .annotation {
+          position: absolute;
+          top: 0px;
+          background-color: #EEEEEE;
+          height: 100%;
+          overflow-x: hidden;
+      }
+      .annotation > span {
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          vertical-align: middle;
+      }
+      .tier {
+          height: 50px;
+          position: relative;
+          border-bottom: 1px solid black;
+      }
+      #userlist {
+          display: inline-block;
+      }
+      #span-edit {
+          display: inline-block;
+      }
+      #selector {
+          position: absolute;
+          height: 100%;
+          background: red;
+          top: 0px;
+          z-index: 5;
+          display: block;
+          opacity: 0.5;
+      }
+      .span-edit {
+          display: none;
+      }
+      .span-edit > input {
+          width: 80px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scrollwrapper">
+      <div id="editpane">
+        <div id="selector" data-start="0" data-end="0"></div>
+        <img width="10000" id="spec" src="spectrogram_5_5000_90.png"/>
+        <div id="tiers">
+        </div>
+      </div>
+    </div>
+    <div id="userlist">
+      <div id="me">
+        <label for="username">Name:&nbsp;</label>
+        <input type="text" id="username"></input>
+      </div>
+      <ul id="users">
+      </ul>
+    </div>
+    <div id="span-edit">
+      <div class="span-edit span-edit-new">
+        <input type="number" id="span-edit-new-start"></input>
+        <span> ms - </span>
+        <input type="number" id="span-edit-new-end"></input>
+        <span> ms</span>
+        <br/>
+        <label for="span-edit-new-text">Contents: </label>
+        <input type="text" id="span-edit-new-text"></input>
+        <br/>
+        <select id="span-edit-new-tier"></select>
+        <button id="span-edit-new-play">Play</button>
+        <button id="span-edit-new-save">Add</button>
+      </div>
+    </div>
+  </body>
+</html>
