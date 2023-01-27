@@ -105,6 +105,9 @@ function audioReady() {
   });
   $('#span-edit-cancel').click(hide_span_edit);
   $('#new-tier').click(function() { send({type: 'add_tier'}); });
+  $('#username').change(function() {
+    send({type: 'rename_user', name: $('#username').val()});
+  });
 }
 
 function hide_span_edit() {
@@ -253,6 +256,7 @@ function receive(event) {
     event.annotations.forEach(add_annotation);
     USER_NAMES = event.user_names;
     ACTIVE_USERS = event.active_users;
+    $('#username').val(USER_NAMES[MY_ID]);
     display_users();
     break;
   case 'new_user':
