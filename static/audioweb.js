@@ -73,7 +73,7 @@ function audioReady() {
   $('#span-edit-new-save').click(function() {
     let start = parseInt($('#span-edit-start').val());
     let end = parseInt($('#span-edit-end').val());
-    let tier = $('#span-edit-tier').val();
+    let tier = $('#span-edit-new-tier').val();
     let text = $('#span-edit-text').val();
     let ann = {
       start: start,
