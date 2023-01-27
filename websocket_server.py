@@ -120,7 +120,7 @@ async def connect(websocket):
             'user': wid,
         })
 
-async def run_server(port, directory):
+async def run_server(host, port, directory):
     global ANNOTATIONS, USER_NAMES, ANNOTATION_FILE, TIERS
     ANNOTATION_FILE = os.path.join(directory, 'annotations')
     with open(ANNOTATION_FILE) as fin:
@@ -135,13 +135,14 @@ async def run_server(port, directory):
             ANNOTATIONS = []
             USER_NAMES = {}
             TIERS = {1: 'Tier 1'}
-    async with websockets.serve(connect, 'localhost', port):
+    async with websockets.serve(connect, host, port):
         await asyncio.Future()
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('host', action='store')
     parser.add_argument('port', type=int, default=5000)
     parser.add_argument('directory', action='store')
     args = parser.parse_args()
-    asyncio.run(run_server(args.port, args.directory))
+    asyncio.run(run_server(args.host, args.port, args.directory))

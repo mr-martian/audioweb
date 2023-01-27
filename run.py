@@ -39,7 +39,7 @@ with tempfile.TemporaryDirectory() as tempd:
     with open(os.path.join(tempd, 'constants.js'), 'w') as fout:
         fout.write('var WS_ADDR = "ws://%s:%s/";\n' % (args.n, args.w))
     hproc = subprocess.Popen(['python3', hpath, str(args.p), tempd])
-    wproc = subprocess.Popen(['python3', wpath, str(args.w), tempd])
+    wproc = subprocess.Popen(['python3', wpath, args.n, str(args.w), tempd])
     try:
         hproc.wait()
     except KeyboardInterrupt:
