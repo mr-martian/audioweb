@@ -196,6 +196,9 @@ function display_tier(tid) {
 }
 
 function add_annotation(ann) {
+  if (!TIERS.hasOwnProperty(ann.tier)) {
+    return; // probably bad data on load - skip
+  }
   let el = document.createElement('div');
   el.className = 'annotation';
   el.setAttribute('data-ann', JSON.stringify(ann));
