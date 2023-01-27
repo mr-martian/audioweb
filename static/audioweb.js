@@ -203,6 +203,9 @@ function add_annotation(ann) {
   el.style.left = (ann.start / 10) + 'px';
   $(el).width(((ann.end - ann.start)/10) + 'px');
   ann.element = el;
+  if (!ANNOTATIONS.hasOwnProperty(ann.tier)) {
+    ANNOTATIONS[ann.tier] = [];
+  }
   ANNOTATIONS[ann.tier].push(ann);
   TIERS[ann.tier].tier_elem.appendChild(el);
   el.onclick = click_span;
